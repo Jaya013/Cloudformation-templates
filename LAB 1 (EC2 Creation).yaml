@@ -1,0 +1,163 @@
+Parameters :
+  Vpc:
+    Type: "String"
+    Default: ""
+
+  Subnet01:
+    Type: "String"
+    Default: ""
+
+  securitygroupIds:
+    Type: 'List<AWS::EC2::SecurityGroup::Id>'
+    Default: ""
+
+  keypair:
+    Type: "String"
+    Default: "cloudformation"
+
+  Image:
+    Type: "String"
+    Default: "a"
+
+  EC2Type:
+    Type: String
+    Description: 'The instance type, such as t2.micro.'
+    AllowedValues:
+      - t2.nano
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - t3.nano
+      - t3.micro
+      - t3.small
+      - t3.medium
+    Default: t2.micro  
+
+  IAMRole:
+    Type: String    
+    Default: "arn:aws:iam::xxxx:instance-profile/CF-Test-Role"
+    
+
+  EC2Termination:
+    Type: String
+    Default: "true"
+
+  EBSSize:
+    Type: Number
+    Description: The size of the volume in GBs
+    Default: 10
+    MinValue: 10  
+
+  OS:
+    Type: String
+    Description: Tag for EC2
+    AllowedValues:
+      - Windows
+      - Unix
+    Default: Windows
+
+  Application:
+     Type: String 
+     Description: Tag for EC2
+     AllowedValues:
+       - Java
+       - Python
+       - Ruby 
+     Default: Java
+
+  Region:
+     Type: String
+     Description: Tag for EC2
+     AllowedValues:
+       - useast
+       - uswest 
+     Default: useast  
+
+  BackupDetails:
+     Type: String
+     Description: Tag for EC2
+     AllowedValues:
+       - Yes
+       - No 
+     Default: Yes        
+    
+  Environment:
+     Type: String
+     Description: Tag for EC2
+     AllowedValues:
+       - Prod
+       - Dev
+       - Test 
+     Default: Test
+
+  Dataclassification:
+     Type: String
+     Description: Tag for EC2
+     AllowedValues:
+       - Public
+       - Private
+     Default: Private
+
+  Criticality:
+     Type: String
+     Description: Tag for EC2
+     AllowedValues:
+       - 1-mostcritical
+       - 2-somewhat-critical
+       - 3-less-critical
+       - 4-not-critical 
+     Default: 3-less-critical   
+
+Resources :
+
+ myfirstCF:
+  Type: AWS::EC2::Instance
+  Properties: 
+    DisableApiTermination: !Ref EC2Termination
+    IamInstanceProfile: !Ref IAMRole
+    ImageId: !Ref Image
+    InstanceType: !Ref EC2Type
+    KeyName: !Ref keypair
+    SecurityGroupIds: !Ref securitygroupIds
+    SubnetId: !Ref Subnet01
+     
+    BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: !Ref EBSSize
+            VolumeType: standard
+            DeleteOnTermination: true
+            Encrypted: true
+
+    
+    Tags:
+
+       - Key: OS
+         Value: !Ref OS
+
+       - Key: Name 
+         Value: CF-EC2 
+
+       - Key: Application
+         Value: !Ref Application  
+
+       - Key: Region
+         Value: !Ref Region 
+
+       - Key: BackupDetails 
+         Value: !Ref BackupDetails  
+
+       - Key: Environment
+         Value: !Ref Environment  
+
+       - Key: Dataclassification
+         Value: !Ref Dataclassification  
+
+       - Key: Criticality
+         Value: !Ref Criticality  
+   
+
+
+    
